@@ -38,10 +38,19 @@ def lf_data(
         )
 
     # coarse load calculation.
-    load = load_at_base_propspeed * (
-        propspeed / base_propspeed
-    ) ** 2 * 1 + 0.25 * np.sin(np.deg2rad(discangle)) * (1 + airspeed / 20.0)
-
+    load = (
+        load_at_base_propspeed
+        * (propspeed / base_propspeed) ** 2
+        * (
+            1
+            + (
+                (np.max(propspeed) ** 2 / propspeed**2)
+                * (np.sin(np.deg2rad(discangle)))
+                * airspeed
+                / 30.0
+            )
+        )
+    )
     return pd.DataFrame(
         {
             "airspeed": airspeed,
@@ -50,18 +59,3 @@ def lf_data(
             "load": load,
         }
     )
-
-
-def main():
-    a = [1, 2]
-    lf_data(
-        a,
-        a,
-        [1e3, 0.1],
-        0.0,
-        0.0,
-    )
-
-
-if __name__ == "__main__":
-    main()

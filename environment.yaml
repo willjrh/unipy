@@ -8,6 +8,11 @@ dependencies:
   - smt
   - matplotlib
   - plotly
+  - sphinx
+  - sphinx_rtd_theme
+  - pytest
+  - black
+  - ipykernel 
 
 channels:
   - defaults

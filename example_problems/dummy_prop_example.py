@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from random import uniform
 from smt.surrogate_models import KRG
 
 
@@ -114,3 +115,36 @@ def hf_data(
             "load": load,
         }
     )
+
+
+def add_noise_adv_rat(
+    df: pd.DataFrame,
+    axial_noise_adv_rat: float,
+    radius: float = 1.6,
+    noise_shift: float = 1.0,
+) -> pd.DataFrame:
+    """_summary_
+
+    Args:
+        df (pd.DataFrame): _description_
+        axial_noise_adv_rat (float): _description_
+        noise_mag (float): _description_
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+    # axial advance ratio: (airspeed sin(discangle)) / (omega * r)
+    adv_rat: np.ndarray = (
+        np.sin(np.deg2rad(df.discangle.to_numpy())) * df.airspeed.to_numpy()
+    ) / (df.propspeed.to_numpy() * np.pi * radius / 30)
+    # use logical indexing to add in the noise
+    no_noise_load = df.load.to_numpy()
+    # noise = np.random.normal(0.0, 1, size=adv_rat.shape) * 1000
+    np.random.seed(0)
+    noise = np.random.rand(len(adv_rat)) + 0.5
+    df["load_noise"] = np.where(
+        adv_rat > axial_noise_adv_rat,
+        noise_shift * no_noise_load * noise,
+        no_noise_load,
+    )
+    return df

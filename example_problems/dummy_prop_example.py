@@ -100,10 +100,10 @@ def hf_data(
         * (
             0.95
             + (
-                (np.max(propspeed) ** 3 / propspeed**3)
+                (np.max(propspeed) ** 1.3 / propspeed**1.3)
                 * (np.sin(np.deg2rad(discangle)))
                 * airspeed
-                / 35.0
+                / 20.0
             )
         )
     )
@@ -140,7 +140,7 @@ def add_noise_adv_rat(
     # use logical indexing to add in the noise
     no_noise_load = df.load.to_numpy()
     # noise = np.random.normal(0.0, 1, size=adv_rat.shape) * 1000
-    np.random.seed(0)
+    np.random.seed(20)
     noise = np.random.rand(len(adv_rat)) + 0.5
     df["load_noise"] = np.where(
         adv_rat > axial_noise_adv_rat,
